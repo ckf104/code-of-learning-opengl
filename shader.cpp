@@ -58,6 +58,7 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath) {
 
 void Shader::use() { glUseProgram(programid); }
 void Shader::destroy() { glDeleteProgram(programid); }
+uint32_t Shader::getid() { return programid; }
 
 void Shader::setBool(const std::string& name, bool value) const {
   glUniform1i(glGetUniformLocation(programid, name.c_str()), (int)value);

@@ -3,9 +3,8 @@
 
 #include "shader.hpp"
 #include "hello.hpp"
+#include "texture.hpp"
 
-#define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.hpp"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
   std::cout << "[info] new width: " << width << " , height: " << height
@@ -14,11 +13,13 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
 }
 
 float vertices[] = {
-    // 位置              // 颜色
-    0.5f,  -0.5f, 0.0f, 1.0f, 0.0f, 0.0f,  // 右下
-    -0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f,  // 左下
-    0.0f,  0.5f,  0.0f, 0.0f, 0.0f, 1.0f   // 顶部
+    //     ---- 位置 ----       ---- 颜色 ----     - 纹理坐标 -
+    0.5f,  0.5f,  0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,  // 右上
+    0.5f,  -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,  // 右下
+    -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,  // 左下
+    -0.5f, 0.5f,  0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f   // 左上
 };
+
 unsigned int indices[] = {
     // 注意索引从0开始!
     // 此例的索引(0,1,2,3)就是顶点数组vertices的下标，
@@ -28,12 +29,17 @@ unsigned int indices[] = {
     1, 2, 3   // 第二个三角形
 };
 char infolog[512];
+//const char* image_path = "container.jpg";
+const char* image_path = "/home/ckf/tmp/background/acg.gy_14.jpg";
+const char* image_path2 = "smile.png";
 
 int main() {
   uint32_t VBO, VAO, EBO;
   uint32_t vertexShader;
   uint32_t fragmentShader;
   uint32_t shaderProgram;
+  uint32_t texture;
+  int width, height, nrChannels;
   int success;
 
   glfwInit();
@@ -55,6 +61,11 @@ int main() {
     return -1;
   }
   Shader myShader("./vshader.glsl", "./fshader.glsl");
+  Texture tex0(0, image_path, "texture1", GL_RGB);
+  Texture tex1(1, image_path2, "texture2", GL_RGBA);
+  tex0.setPos(&myShader);
+  tex1.setPos(&myShader);
+  checkErr();  
 
   glGenBuffers(1, &VBO);
   glBindBuffer(GL_ARRAY_BUFFER, VBO);
@@ -62,15 +73,20 @@ int main() {
 
   glGenVertexArrays(1, &VAO);
   glBindVertexArray(VAO);
-  
+
   // 位置属性
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
   glEnableVertexAttribArray(0);
+
   // 颜色属性
-  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float),
+  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float),
                         (void*)(3 * sizeof(float)));
   glEnableVertexAttribArray(1);
 
+  glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float),
+                        (void*)(6 * sizeof(float)));
+  glEnableVertexAttribArray(2);
+  checkErr();
   // the binding of EBO must be after the VAO, when binding EBO, the VAO will
   // store info of EBO. Unbinding is reversed order.
   glGenBuffers(1, &EBO);
@@ -78,10 +94,7 @@ int main() {
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices,
                GL_STATIC_DRAW);
 
-  uint32_t status = glGetError();
-  if (status != GL_NO_ERROR) {
-    std::cout << status << std::endl;
-  }
+  checkErr();
 
   // glDrawArrays(GL_TRIANGLES, 0, 3);
 
@@ -92,19 +105,15 @@ int main() {
     glClear(GL_COLOR_BUFFER_BIT);
 
     myShader.use();
+    tex0.texActive();
+    tex1.texActive();
     glBindVertexArray(VAO);  // seeing as we only have a single VAO there's no
                              // need to bind it every time, but we'll do so to
                              // keep things a bit more organized
-    glDrawArrays(GL_TRIANGLES, 0, 3);
-    status = glGetError();
-    if (status != GL_NO_ERROR) {
-      std::cout << status << std::endl;
-    }
-    //glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-    status = glGetError();
-    if (status != GL_NO_ERROR) {
-      std::cout << status << std::endl;
-    }
+    // glDrawArrays(GL_TRIANGLES, 0, 3);
+    checkErr();
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+    checkErr();
     glfwSwapBuffers(window);
     glfwPollEvents();
   }
@@ -113,6 +122,7 @@ int main() {
   myShader.destroy();
   glDeleteBuffers(1, &VBO);
   glDeleteBuffers(1, &EBO);
+  tex0.texDestroy();
 
   glfwTerminate();
   return 0;
@@ -135,4 +145,11 @@ int programlog(const char* level, uint32_t program) {
     std::cout << level << infolog << std::endl;
   }
   return success;
+}
+
+void checkErr() {
+  uint32_t status = glGetError();
+  if (status != GL_NO_ERROR) {
+    std::cout << status << std::endl;
+  }
 }
