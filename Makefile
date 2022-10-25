@@ -1,8 +1,8 @@
 SHELL := /bin/bash
 
-HELLO_SRC := hello.cpp texture.cpp shader.cpp glad/src/glad.c
+HELLO_SRC := hello.cpp camera.cpp texture.cpp shader.cpp glad/src/glad.c
 CC := g++
-CFLAGS := -I./glad/include/ -I/home/ckf/glfw-3.3.8/install/include/ -L/home/ckf/glfw-3.3.8/install/lib/ -lGL -lglfw -ldl
+CFLAGS := -I./glad/include/ -I./glm/include/ -I/home/ckf/glfw-3.3.8/install/include/ -L/home/ckf/glfw-3.3.8/install/lib/ -lGL -lglfw -ldl
 TARGET := hello
 
 hello: ${HELLO_SRC} 
