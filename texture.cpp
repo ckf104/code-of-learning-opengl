@@ -43,6 +43,6 @@ void Texture::texDestroy() { glDeleteTextures(1, &buf_id); }
 
 void Texture::setPos(Shader* program) {
   program->use(); // active program before using glUniform1i
-  glUniform1i(glGetUniformLocation(program->getid(), name.c_str()), pos);
+  program->setInt(name, pos);
   checkErr();
 }
