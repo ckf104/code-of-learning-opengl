@@ -3,7 +3,7 @@
 #include <iostream>
 
 const float SPEED = 150.0f;
-const float SENSITIVITY = 0.005f;
+const float SENSITIVITY = 0.2f;
 
 Camera::Camera(float sw, float sh, float near /*=0.1f*/, float far /*=100.0f*/,
                glm::vec3 position /*=glm::vec3(0.0f, 0.0f, 0.0f)*/,
