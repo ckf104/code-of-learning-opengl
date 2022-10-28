@@ -52,11 +52,11 @@ float planeVertices[] = {
     0.0f, 2.0f,  5.0f,  -0.5f, -5.0f, 2.0f,  2.0f};
 
 glm::vec3 cubePositions[] = {
-    glm::vec3(-1.0f, 0.001f, -1.0f),   glm::vec3(2.0f, 0.001f, 0.0f),
-    glm::vec3(-1.5f, -2.2f, -2.5f), glm::vec3(-3.8f, -2.0f, -12.3f),
-    glm::vec3(2.4f, -0.4f, -3.5f),  glm::vec3(-1.7f, 3.0f, -7.5f),
-    glm::vec3(1.3f, -2.0f, -2.5f),  glm::vec3(1.5f, 2.0f, -2.5f),
-    glm::vec3(1.5f, 0.2f, -1.5f),   glm::vec3(-1.3f, 1.0f, -1.5f)};
+    glm::vec3(-1.0f, 0.001f, -1.0f), glm::vec3(2.0f, 0.001f, 0.0f),
+    glm::vec3(-1.5f, -2.2f, -2.5f),  glm::vec3(-3.8f, -2.0f, -12.3f),
+    glm::vec3(2.4f, -0.4f, -3.5f),   glm::vec3(-1.7f, 3.0f, -7.5f),
+    glm::vec3(1.3f, -2.0f, -2.5f),   glm::vec3(1.5f, 2.0f, -2.5f),
+    glm::vec3(1.5f, 0.2f, -1.5f),    glm::vec3(-1.3f, 1.0f, -1.5f)};
 
 glm::vec3 lampPos = glm::vec3(1.2f, 1.0f, 2.0f);
 
@@ -190,6 +190,7 @@ int main() {
     return -1;
   }
   Shader myShader("./vshader.glsl", "./fshader.glsl");
+  Shader simpleShader("./vshader.glsl", "./simplefshader.glsl");
   Texture tex0(0, image_path, "texture1", GL_RGB);
   Texture tex1(0, image_path2, "texture1", GL_RGB);
   /*tex0.setPos(&myShader);
@@ -245,14 +246,36 @@ int main() {
   checkErr();
 
   glEnable(GL_DEPTH_TEST);
+  glEnable(GL_STENCIL_TEST);
+  glStencilFunc(GL_ALWAYS, 1, 0xff);
+  glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+  glStencilMask(0xff);  // behaviour: always pass stencil test, and change
+                        // value into 1
+
+  glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+  glClearDepth(1.0f);  // default behaviour
+  glClearStencil(0);   // default behaviour
   glViewport(0, 0, 800, 600);
 
   while (!glfwWindowShouldClose(window)) {
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-    glClearDepth(1.0f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    float lastFrame = (float)glfwGetTime();
 
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+    glm::mat4 view = camera.GetView();
+    glm::mat4 projection = camera.GetProjection();
+
+    glStencilMask(0x00);
+    glBindVertexArray(floorVAO);
     myShader.use();
+    tex1.texActive();
+
+    myShader.setFMat4("view", view);
+    myShader.setFMat4("projection", projection);
+    glm::mat4 model(1.0f);
+    myShader.setFMat4("model", model);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+
+    glStencilMask(0xff);
     tex0.texActive();
     glBindVertexArray(VAO);  // seeing as we only have a single VAO there's no
                              // need to bind it every time, but we'll do so to
@@ -266,33 +289,35 @@ int main() {
     trans = glm::translate(trans, glm::vec3(0.5f, -0.5f, 0.0f));
     glUniformMatrix4fv(glGetUniformLocation(myShader.getid(), "transform"), 1,
                        GL_FALSE, glm::value_ptr(trans));*/
-    float lastFrame = (float)glfwGetTime();
 
-    glm::mat4 view = camera.GetView();
-    glm::mat4 projection = camera.GetProjection();
     myShader.setFMat4("view", view);
     myShader.setFMat4("projection", projection);
 
     for (int i = 0; i < ncubes; ++i) {
       glm::mat4 model(1.0f);
       model = glm::translate(model, cubePositions[i]);
-      /*model = glm::rotate(model, (float)glfwGetTime() * glm::radians(5.0f * i),
-                          glm::vec3(1.0f, 0.3f, 0.5f));*/
-      glm::mat3 model_inverse_trans(model);  // 4x4 -> 3x3
-      model_inverse_trans = glm::transpose(glm::inverse(model_inverse_trans));
+      /*model = glm::rotate(model, (float)glfwGetTime() * glm::radians(5.0f *
+         i), glm::vec3(1.0f, 0.3f, 0.5f));*/
+      // glm::mat3 model_inverse_trans(model);  // 4x4 -> 3x3
       myShader.setFMat4("model", model);
 
       glDrawArrays(GL_TRIANGLES, 0, 36);
     }
 
-    glBindVertexArray(floorVAO);
-    tex1.texActive();
+    glDisable(GL_DEPTH_TEST);
+    glStencilFunc(GL_NOTEQUAL, 1, 0xff);
+    glStencilMask(0x00);
+    simpleShader.use();
+    simpleShader.setFMat4("view", view);
+    simpleShader.setFMat4("projection", projection);
+    for (int i = 0; i < ncubes; ++i) {
+      glm::mat4 model(1.0f);
+      model = glm::translate(model, cubePositions[i]);
+      model = glm::scale(model, glm::vec3(1.05f, 1.05f, 1.05f));
+      simpleShader.setFMat4("model", model);
 
-    myShader.setFMat4("view", view);
-    myShader.setFMat4("projection", projection);
-    glm::mat4 model(1.0f);
-    myShader.setFMat4("model", model);
-    glDrawArrays(GL_TRIANGLES, 0, 36);
+      glDrawArrays(GL_TRIANGLES, 0, 36);
+    }
 
     process_input(window, (float)glfwGetTime() - lastFrame);
     checkErr();
@@ -300,12 +325,16 @@ int main() {
     checkErr();
     glfwSwapBuffers(window);
     glfwPollEvents();
+
+    glStencilFunc(GL_ALWAYS, 1, 0xff);
+    glStencilMask(0xff);
+    glEnable(GL_DEPTH_TEST);
   }
 
   glDeleteVertexArrays(1, &VAO);
   glDeleteVertexArrays(1, &floorVAO);
   myShader.destroy();
-  //lampShader.destroy();
+  // lampShader.destroy();
   glDeleteBuffers(1, &VBO);
   glDeleteBuffers(1, &EBO);
   glDeleteBuffers(1, &floorVBO);

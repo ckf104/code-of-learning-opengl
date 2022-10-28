@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-const float SPEED = 150.0f;
+const float SPEED = 10.0f;
 const float SENSITIVITY = 0.2f;
 
 Camera::Camera(float sw, float sh, float near /*=0.1f*/, float far /*=100.0f*/,
