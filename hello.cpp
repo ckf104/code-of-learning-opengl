@@ -248,7 +248,7 @@ int main() {
   glEnable(GL_DEPTH_TEST);
   glEnable(GL_STENCIL_TEST);
   glStencilFunc(GL_ALWAYS, 1, 0xff);
-  glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+  glStencilOp(GL_KEEP, GL_REPLACE, GL_REPLACE);
   glStencilMask(0xff);  // behaviour: always pass stencil test, and change
                         // value into 1
 
@@ -275,7 +275,10 @@ int main() {
     myShader.setFMat4("model", model);
     glDrawArrays(GL_TRIANGLES, 0, 36);
 
-    glStencilMask(0xff);
+    simpleShader.use();
+    simpleShader.setFMat4("view", view);
+    simpleShader.setFMat4("projection", projection);
+
     tex0.texActive();
     glBindVertexArray(VAO);  // seeing as we only have a single VAO there's no
                              // need to bind it every time, but we'll do so to
@@ -290,21 +293,33 @@ int main() {
     glUniformMatrix4fv(glGetUniformLocation(myShader.getid(), "transform"), 1,
                        GL_FALSE, glm::value_ptr(trans));*/
 
-    myShader.setFMat4("view", view);
-    myShader.setFMat4("projection", projection);
-
     for (int i = 0; i < ncubes; ++i) {
+      glEnable(GL_DEPTH_TEST);
+      glStencilMask(0xff);
+      glStencilFunc(GL_ALWAYS, 1, 0xff);
+      glClear(GL_STENCIL_BUFFER_BIT);
+      myShader.use();
+
       glm::mat4 model(1.0f);
       model = glm::translate(model, cubePositions[i]);
       /*model = glm::rotate(model, (float)glfwGetTime() * glm::radians(5.0f *
          i), glm::vec3(1.0f, 0.3f, 0.5f));*/
       // glm::mat3 model_inverse_trans(model);  // 4x4 -> 3x3
       myShader.setFMat4("model", model);
+      glDrawArrays(GL_TRIANGLES, 0, 36);
 
+      glDisable(GL_DEPTH_TEST);
+      glStencilFunc(GL_NOTEQUAL, 1, 0xff);
+      glStencilMask(0x00);
+      simpleShader.use();
+      glm::mat4 model2(1.0f);
+      model2 = glm::translate(model2, cubePositions[i]);
+      model2 = glm::scale(model2, glm::vec3(1.05f, 1.05f, 1.05f));
+      simpleShader.setFMat4("model", model2);
       glDrawArrays(GL_TRIANGLES, 0, 36);
     }
 
-    glDisable(GL_DEPTH_TEST);
+    /* glDisable(GL_DEPTH_TEST);
     glStencilFunc(GL_NOTEQUAL, 1, 0xff);
     glStencilMask(0x00);
     simpleShader.use();
@@ -317,7 +332,7 @@ int main() {
       simpleShader.setFMat4("model", model);
 
       glDrawArrays(GL_TRIANGLES, 0, 36);
-    }
+    }*/
 
     process_input(window, (float)glfwGetTime() - lastFrame);
     checkErr();
