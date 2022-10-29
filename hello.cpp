@@ -15,41 +15,76 @@ float lastY = screen_h / 2.0f;
 int ncubes = 2;
 Camera camera(screen_w, screen_h);
 
+// clang-format off
 float vertices[] = {
     // positions          // texture Coords
-    -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, 0.5f,  -0.5f, -0.5f, 1.0f, 0.0f,
-    0.5f,  0.5f,  -0.5f, 1.0f, 1.0f, 0.5f,  0.5f,  -0.5f, 1.0f, 1.0f,
-    -0.5f, 0.5f,  -0.5f, 0.0f, 1.0f, -0.5f, -0.5f, -0.5f, 0.0f, 0.0f,
+    -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, 
+    0.5f,  -0.5f, -0.5f, 1.0f, 0.0f,
+    0.5f,  0.5f,  -0.5f, 1.0f, 1.0f, 
+    0.5f,  0.5f,  -0.5f, 1.0f, 1.0f,
+    -0.5f, 0.5f,  -0.5f, 0.0f, 1.0f, 
+    -0.5f, -0.5f, -0.5f, 0.0f, 0.0f,
 
-    -0.5f, -0.5f, 0.5f,  0.0f, 0.0f, 0.5f,  -0.5f, 0.5f,  1.0f, 0.0f,
-    0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-    -0.5f, 0.5f,  0.5f,  0.0f, 1.0f, -0.5f, -0.5f, 0.5f,  0.0f, 0.0f,
+    -0.5f, -0.5f, 0.5f,  0.0f, 0.0f, 
+    0.5f,  -0.5f, 0.5f,  1.0f, 0.0f,
+    0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 
+    0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+    -0.5f, 0.5f,  0.5f,  0.0f, 1.0f, 
+    -0.5f, -0.5f, 0.5f,  0.0f, 0.0f,
 
-    -0.5f, 0.5f,  0.5f,  1.0f, 0.0f, -0.5f, 0.5f,  -0.5f, 1.0f, 1.0f,
-    -0.5f, -0.5f, -0.5f, 0.0f, 1.0f, -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
-    -0.5f, -0.5f, 0.5f,  0.0f, 0.0f, -0.5f, 0.5f,  0.5f,  1.0f, 0.0f,
+    -0.5f, 0.5f,  0.5f,  1.0f, 0.0f, 
+    -0.5f, 0.5f,  -0.5f, 1.0f, 1.0f,
+    -0.5f, -0.5f, -0.5f, 0.0f, 1.0f, 
+    -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
+    -0.5f, -0.5f, 0.5f,  0.0f, 0.0f, 
+    -0.5f, 0.5f,  0.5f,  1.0f, 0.0f,
 
-    0.5f,  0.5f,  0.5f,  1.0f, 0.0f, 0.5f,  0.5f,  -0.5f, 1.0f, 1.0f,
-    0.5f,  -0.5f, -0.5f, 0.0f, 1.0f, 0.5f,  -0.5f, -0.5f, 0.0f, 1.0f,
-    0.5f,  -0.5f, 0.5f,  0.0f, 0.0f, 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+    0.5f,  0.5f,  0.5f,  1.0f, 0.0f, 
+    0.5f,  0.5f,  -0.5f, 1.0f, 1.0f,
+    0.5f,  -0.5f, -0.5f, 0.0f, 1.0f,
+    0.5f,  -0.5f, -0.5f, 0.0f, 1.0f,
+    0.5f,  -0.5f, 0.5f,  0.0f, 0.0f, 
+    0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
 
-    -0.5f, -0.5f, -0.5f, 0.0f, 1.0f, 0.5f,  -0.5f, -0.5f, 1.0f, 1.0f,
-    0.5f,  -0.5f, 0.5f,  1.0f, 0.0f, 0.5f,  -0.5f, 0.5f,  1.0f, 0.0f,
-    -0.5f, -0.5f, 0.5f,  0.0f, 0.0f, -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
+    -0.5f, -0.5f, -0.5f, 0.0f, 1.0f, 
+    0.5f,  -0.5f, -0.5f, 1.0f, 1.0f,
+    0.5f,  -0.5f, 0.5f,  1.0f, 0.0f, 
+    0.5f,  -0.5f, 0.5f,  1.0f, 0.0f,
+    -0.5f, -0.5f, 0.5f,  0.0f, 0.0f, 
+    -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
 
-    -0.5f, 0.5f,  -0.5f, 0.0f, 1.0f, 0.5f,  0.5f,  -0.5f, 1.0f, 1.0f,
-    0.5f,  0.5f,  0.5f,  1.0f, 0.0f, 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-    -0.5f, 0.5f,  0.5f,  0.0f, 0.0f, -0.5f, 0.5f,  -0.5f, 0.0f, 1.0f};
+    -0.5f, 0.5f,  -0.5f, 0.0f, 1.0f, 
+    0.5f,  0.5f,  -0.5f, 1.0f, 1.0f,
+    0.5f,  0.5f,  0.5f,  1.0f, 0.0f, 
+    0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+    -0.5f, 0.5f,  0.5f,  0.0f, 0.0f, 
+    -0.5f, 0.5f,  -0.5f, 0.0f, 1.0f};
 
 float planeVertices[] = {
     // positions          // texture Coords (note we set these higher than 1
-    // (together with GL_REPEAT as texture wrapping mode). this will cause the
+    // (together with GL_REPEAT as texture wrapping mode). this will cause
+    // the
     // floor texture to repeat)
-    5.0f, -0.5f, 5.0f,  2.0f,  0.0f,  -5.0f, -0.5f, 5.0f,
-    0.0f, 0.0f,  -5.0f, -0.5f, -5.0f, 0.0f,  2.0f,
+    5.0f, -0.5f, 5.0f,  2.0f,  0.0f,
+    -5.0f, -0.5f, 5.0f, 0.0f, 0.0f,  
+    -5.0f, -0.5f, -5.0f, 0.0f,  2.0f,
 
-    5.0f, -0.5f, 5.0f,  2.0f,  0.0f,  -5.0f, -0.5f, -5.0f,
-    0.0f, 2.0f,  5.0f,  -0.5f, -5.0f, 2.0f,  2.0f};
+    5.0f, -0.5f, 5.0f,  2.0f,  0.0f,  
+    -5.0f, -0.5f, -5.0f, 0.0f, 2.0f,  
+    5.0f,  -0.5f, -5.0f, 2.0f,  2.0f};
+
+float grassVertices[] = {
+    // positions         // texture Coords (swapped y coordinates because
+    // texture is flipped upside down)
+    0.0f, 0.5f,  0.0f, 0.0f, 1.0f,  
+    0.0f, -0.5f, 0.0f, 0.0f, 0.0f,  
+    1.0f, -0.5f, 0.0f, 1.0f, 0.0f,  
+
+    0.0f, 0.5f,  0.0f, 0.0f, 1.0f,  
+    1.0f, -0.5f, 0.0f, 1.0f, 0.0f,  
+    1.0f, 0.5f,  0.0f, 1.0f, 1.0f,  
+};
+// clang-format on
 
 glm::vec3 cubePositions[] = {
     glm::vec3(-1.0f, 0.001f, -1.0f), glm::vec3(2.0f, 0.001f, 0.0f),
@@ -57,6 +92,12 @@ glm::vec3 cubePositions[] = {
     glm::vec3(2.4f, -0.4f, -3.5f),   glm::vec3(-1.7f, 3.0f, -7.5f),
     glm::vec3(1.3f, -2.0f, -2.5f),   glm::vec3(1.5f, 2.0f, -2.5f),
     glm::vec3(1.5f, 0.2f, -1.5f),    glm::vec3(-1.3f, 1.0f, -1.5f)};
+
+glm::vec3 vegetation[] = {
+    glm::vec3(-1.5f, 0.0f, -0.48f), glm::vec3(1.5f, 0.0f, 0.51f),
+    glm::vec3(0.0f, 0.0f, 0.7f),    glm::vec3(-0.3f, 0.0f, -2.3f),
+    glm::vec3(0.5f, 0.0f, -0.6f),
+};
 
 glm::vec3 lampPos = glm::vec3(1.2f, 1.0f, 2.0f);
 
@@ -72,6 +113,7 @@ char infolog[512];
 const char* image_path = "marble.jpg";
 // const char* image_path = "/home/ckf/tmp/background/acg.gy_14.jpg";
 const char* image_path2 = "metal.png";
+const char* image_path3 = "grass.png";
 
 #define setUniformMat(id, name)                                    \
   glUniformMatrix4fv(glGetUniformLocation(id, #name), 1, GL_FALSE, \
@@ -155,7 +197,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
 }
 
 int main() {
-  uint32_t VBO, VAO, EBO, floorVAO, floorVBO;
+  uint32_t VBO, VAO, EBO, floorVAO, floorVBO, grassVAO, grassVBO;
   uint32_t vertexShader;
   uint32_t fragmentShader;
   uint32_t texture;
@@ -190,9 +232,9 @@ int main() {
     return -1;
   }
   Shader myShader("./vshader.glsl", "./fshader.glsl");
-  Shader simpleShader("./vshader.glsl", "./simplefshader.glsl");
-  Texture tex0(0, image_path, "texture1", GL_RGB);
-  Texture tex1(0, image_path2, "texture1", GL_RGB);
+  Texture tex0(0, image_path, "texture1", GL_REPEAT);
+  Texture tex1(0, image_path2, "texture1", GL_REPEAT);
+  Texture tex2(0, image_path3, "texture1", GL_CLAMP_TO_EDGE);
   /*tex0.setPos(&myShader);
   tex1.setPos(&myShader);*/
   checkErr();
@@ -228,6 +270,20 @@ int main() {
                         (void*)(3 * sizeof(float)));
   glEnableVertexAttribArray(1);
 
+  glGenBuffers(1, &grassVBO);
+  glBindBuffer(GL_ARRAY_BUFFER, grassVBO);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(grassVertices), grassVertices,
+               GL_STATIC_DRAW);
+
+  glGenVertexArrays(1, &grassVAO);
+  glBindVertexArray(grassVAO);
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+  glEnableVertexAttribArray(0);
+
+  glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float),
+                        (void*)(3 * sizeof(float)));
+  glEnableVertexAttribArray(1);
+
   // 颜色属性
   /*glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float),
                         (void*)(3 * sizeof(float)));
@@ -246,25 +302,25 @@ int main() {
   checkErr();
 
   glEnable(GL_DEPTH_TEST);
-  glEnable(GL_STENCIL_TEST);
+  /*glEnable(GL_STENCIL_TEST);
   glStencilFunc(GL_ALWAYS, 1, 0xff);
   glStencilOp(GL_KEEP, GL_REPLACE, GL_REPLACE);
-  glStencilMask(0xff);  // behaviour: always pass stencil test, and change
+  glStencilMask(0xff); */ // behaviour: always pass stencil test, and change
                         // value into 1
 
   glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
   glClearDepth(1.0f);  // default behaviour
-  glClearStencil(0);   // default behaviour
+  // glClearStencil(0);   // default behaviour
   glViewport(0, 0, 800, 600);
 
   while (!glfwWindowShouldClose(window)) {
     float lastFrame = (float)glfwGetTime();
 
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT |
+            GL_DEPTH_BUFFER_BIT /* | GL_STENCIL_BUFFER_BIT*/);
     glm::mat4 view = camera.GetView();
     glm::mat4 projection = camera.GetProjection();
 
-    glStencilMask(0x00);
     glBindVertexArray(floorVAO);
     myShader.use();
     tex1.texActive();
@@ -275,9 +331,16 @@ int main() {
     myShader.setFMat4("model", model);
     glDrawArrays(GL_TRIANGLES, 0, 36);
 
-    simpleShader.use();
-    simpleShader.setFMat4("view", view);
-    simpleShader.setFMat4("projection", projection);
+    glBindVertexArray(grassVAO);
+    myShader.use();
+    tex2.texActive();
+    for (uint32_t i = 0; i < sizeof(vegetation) / sizeof(vegetation[0]);
+         ++i) {
+      glm::mat4 model(1.0f);
+      model = glm::translate(model, vegetation[i]);
+      myShader.setFMat4("model", model);
+      glDrawArrays(GL_TRIANGLES, 0, 6);
+    }
 
     tex0.texActive();
     glBindVertexArray(VAO);  // seeing as we only have a single VAO there's no
@@ -294,10 +357,6 @@ int main() {
                        GL_FALSE, glm::value_ptr(trans));*/
 
     for (int i = 0; i < ncubes; ++i) {
-      glEnable(GL_DEPTH_TEST);
-      glStencilMask(0xff);
-      glStencilFunc(GL_ALWAYS, 1, 0xff);
-      glClear(GL_STENCIL_BUFFER_BIT);
       myShader.use();
 
       glm::mat4 model(1.0f);
@@ -307,32 +366,7 @@ int main() {
       // glm::mat3 model_inverse_trans(model);  // 4x4 -> 3x3
       myShader.setFMat4("model", model);
       glDrawArrays(GL_TRIANGLES, 0, 36);
-
-      glDisable(GL_DEPTH_TEST);
-      glStencilFunc(GL_NOTEQUAL, 1, 0xff);
-      glStencilMask(0x00);
-      simpleShader.use();
-      glm::mat4 model2(1.0f);
-      model2 = glm::translate(model2, cubePositions[i]);
-      model2 = glm::scale(model2, glm::vec3(1.05f, 1.05f, 1.05f));
-      simpleShader.setFMat4("model", model2);
-      glDrawArrays(GL_TRIANGLES, 0, 36);
     }
-
-    /* glDisable(GL_DEPTH_TEST);
-    glStencilFunc(GL_NOTEQUAL, 1, 0xff);
-    glStencilMask(0x00);
-    simpleShader.use();
-    simpleShader.setFMat4("view", view);
-    simpleShader.setFMat4("projection", projection);
-    for (int i = 0; i < ncubes; ++i) {
-      glm::mat4 model(1.0f);
-      model = glm::translate(model, cubePositions[i]);
-      model = glm::scale(model, glm::vec3(1.05f, 1.05f, 1.05f));
-      simpleShader.setFMat4("model", model);
-
-      glDrawArrays(GL_TRIANGLES, 0, 36);
-    }*/
 
     process_input(window, (float)glfwGetTime() - lastFrame);
     checkErr();
@@ -340,21 +374,20 @@ int main() {
     checkErr();
     glfwSwapBuffers(window);
     glfwPollEvents();
-
-    glStencilFunc(GL_ALWAYS, 1, 0xff);
-    glStencilMask(0xff);
-    glEnable(GL_DEPTH_TEST);
   }
 
   glDeleteVertexArrays(1, &VAO);
   glDeleteVertexArrays(1, &floorVAO);
+  glDeleteVertexArrays(1, &grassVAO);
   myShader.destroy();
   // lampShader.destroy();
   glDeleteBuffers(1, &VBO);
   glDeleteBuffers(1, &EBO);
   glDeleteBuffers(1, &floorVBO);
-  /*tex0.texDestroy();
-  tex1.texDestroy();*/
+  glDeleteBuffers(1, &grassVBO);
+  tex0.texDestroy();
+  tex1.texDestroy();
+  tex2.texDestroy();
 
   glfwTerminate();
   return 0;
