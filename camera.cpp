@@ -3,7 +3,7 @@
 #include <iostream>
 
 const float SPEED = 10.0f;
-const float SENSITIVITY = 0.2f;
+const float SENSITIVITY = 0.4f;
 
 Camera::Camera(float sw, float sh, float near /*=0.1f*/, float far /*=100.0f*/,
                glm::vec3 position /*=glm::vec3(0.0f, 0.0f, 0.0f)*/,
@@ -47,6 +47,7 @@ void Camera::SetScreen(float sw, float sh) {
 }
 
 glm::mat4 Camera::GetProjection() { return Projection; }
+glm::vec3 Camera::GetPosition() { return Position; }
 
 void Camera::ProcessKeyboard(Camera_Movement direction, float deltaTime) {
   float velocity = MovementSpeed * deltaTime;

@@ -42,6 +42,7 @@ class Camera {
   void ProcessMouseScroll(float yoffset);
   glm::mat4 GetProjection();
   glm::mat4 GetView();
+  glm::vec3 GetPosition();
 
  private:
   void updateProjection();

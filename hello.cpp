@@ -9,6 +9,8 @@
 #include "texture.hpp"
 #include "camera.hpp"
 
+#include <algorithm>
+
 int screen_w = 800, screen_h = 600;
 float lastX = screen_w / 2.0f;
 float lastY = screen_h / 2.0f;
@@ -73,7 +75,7 @@ float planeVertices[] = {
     -5.0f, -0.5f, -5.0f, 0.0f, 2.0f,  
     5.0f,  -0.5f, -5.0f, 2.0f,  2.0f};
 
-float grassVertices[] = {
+float windowVertices[] = {
     // positions         // texture Coords (swapped y coordinates because
     // texture is flipped upside down)
     0.0f, 0.5f,  0.0f, 0.0f, 1.0f,  
@@ -113,7 +115,7 @@ char infolog[512];
 const char* image_path = "marble.jpg";
 // const char* image_path = "/home/ckf/tmp/background/acg.gy_14.jpg";
 const char* image_path2 = "metal.png";
-const char* image_path3 = "grass.png";
+const char* image_path3 = "window.png";
 
 #define setUniformMat(id, name)                                    \
   glUniformMatrix4fv(glGetUniformLocation(id, #name), 1, GL_FALSE, \
@@ -197,7 +199,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
 }
 
 int main() {
-  uint32_t VBO, VAO, EBO, floorVAO, floorVBO, grassVAO, grassVBO;
+  uint32_t VBO, VAO, EBO, floorVAO, floorVBO, windowVAO, windowVBO;
   uint32_t vertexShader;
   uint32_t fragmentShader;
   uint32_t texture;
@@ -270,13 +272,13 @@ int main() {
                         (void*)(3 * sizeof(float)));
   glEnableVertexAttribArray(1);
 
-  glGenBuffers(1, &grassVBO);
-  glBindBuffer(GL_ARRAY_BUFFER, grassVBO);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(grassVertices), grassVertices,
+  glGenBuffers(1, &windowVBO);
+  glBindBuffer(GL_ARRAY_BUFFER, windowVBO);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(windowVertices), windowVertices,
                GL_STATIC_DRAW);
 
-  glGenVertexArrays(1, &grassVAO);
-  glBindVertexArray(grassVAO);
+  glGenVertexArrays(1, &windowVAO);
+  glBindVertexArray(windowVAO);
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
   glEnableVertexAttribArray(0);
 
@@ -301,6 +303,9 @@ int main() {
                GL_STATIC_DRAW);
   checkErr();
 
+  glEnable(GL_BLEND);
+  // src is the color that will be painted, dst is the color already painted.
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   glEnable(GL_DEPTH_TEST);
   /*glEnable(GL_STENCIL_TEST);
   glStencilFunc(GL_ALWAYS, 1, 0xff);
@@ -331,17 +336,6 @@ int main() {
     myShader.setFMat4("model", model);
     glDrawArrays(GL_TRIANGLES, 0, 36);
 
-    glBindVertexArray(grassVAO);
-    myShader.use();
-    tex2.texActive();
-    for (uint32_t i = 0; i < sizeof(vegetation) / sizeof(vegetation[0]);
-         ++i) {
-      glm::mat4 model(1.0f);
-      model = glm::translate(model, vegetation[i]);
-      myShader.setFMat4("model", model);
-      glDrawArrays(GL_TRIANGLES, 0, 6);
-    }
-
     tex0.texActive();
     glBindVertexArray(VAO);  // seeing as we only have a single VAO there's no
                              // need to bind it every time, but we'll do so to
@@ -368,6 +362,22 @@ int main() {
       glDrawArrays(GL_TRIANGLES, 0, 36);
     }
 
+    glBindVertexArray(windowVAO);
+    myShader.use();
+    tex2.texActive();
+    std::sort(vegetation,
+              vegetation + sizeof(vegetation) / sizeof(vegetation[0]),
+              [](const glm::vec3& a, const glm::vec3& b) {
+                glm::vec3 pos = camera.GetPosition();
+                return glm::length(pos - a) > glm::length(pos - b);
+              });
+    for (uint32_t i = 0; i < sizeof(vegetation) / sizeof(vegetation[0]); ++i) {
+      glm::mat4 model(1.0f);
+      model = glm::translate(model, vegetation[i]);
+      myShader.setFMat4("model", model);
+      glDrawArrays(GL_TRIANGLES, 0, 6);
+    }
+
     process_input(window, (float)glfwGetTime() - lastFrame);
     checkErr();
     // glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
@@ -378,13 +388,13 @@ int main() {
 
   glDeleteVertexArrays(1, &VAO);
   glDeleteVertexArrays(1, &floorVAO);
-  glDeleteVertexArrays(1, &grassVAO);
+  glDeleteVertexArrays(1, &windowVAO);
   myShader.destroy();
   // lampShader.destroy();
   glDeleteBuffers(1, &VBO);
   glDeleteBuffers(1, &EBO);
   glDeleteBuffers(1, &floorVBO);
-  glDeleteBuffers(1, &grassVBO);
+  glDeleteBuffers(1, &windowVBO);
   tex0.texDestroy();
   tex1.texDestroy();
   tex2.texDestroy();
