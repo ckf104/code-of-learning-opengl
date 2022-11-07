@@ -1,0 +1,7 @@
+2022.11.06 18:36:46 INFO  tracing is disabled for protocol LSP, to enable tracing of incoming and outgoing JSON messages create an empty file at /home/ckf/tmp/gl/.metals/lsp.trace.json or /home/ckf/.cache/metals/lsp.trace.json
+2022.11.06 18:36:49 INFO  logging to file /home/ckf/tmp/gl/.metals/metals.log
+2022.11.06 18:36:49 INFO  Started: Metals version 0.11.9 in workspace '/home/ckf/tmp/gl' for client Visual Studio Code 1.69.2.
+2022.11.06 18:36:55 INFO  time: initialize in 6.16s
+2022.11.06 18:37:01 WARN  Build server is not auto-connectable.
+2022.11.06 18:37:01 WARN  no build tool detected in workspace '/home/ckf/tmp/gl'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. 
+2022.11.06 18:39:32 INFO  shutting down Metals
