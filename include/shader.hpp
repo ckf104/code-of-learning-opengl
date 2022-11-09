@@ -26,6 +26,7 @@ class Shader {
                const char *geometrySource =
                    nullptr);  // note: geometry source code is optional
   // utility functions
+  void SetBool(const char *name, bool value, bool useShader = false);
   void SetFloat(const char *name, float value, bool useShader = false);
   void SetInteger(const char *name, int value, bool useShader = false);
   void SetVector2f(const char *name, float x, float y, bool useShader = false);

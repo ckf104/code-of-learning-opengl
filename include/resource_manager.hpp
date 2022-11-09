@@ -13,6 +13,7 @@
 
 class GameLevel;
 class SpriteRenderer;
+class TextRenderer;
 
 // A static singleton ResourceManager class that hosts several
 // functions to load Textures and Shaders. Each loaded texture
@@ -36,24 +37,33 @@ class ResourceManager {
   static const char* background;
   static const char* background_file;
 
+  static const char* particle;
+  static const char* particle_file;
+
   static const char* ball;
   static const char* ball_file;
 
   static const char* texname_in_shader;
+  static const char* font_file;
 
   static const char* vshader_file;
   static const char* fshader_file;
+  static const char* textfshader_file;
+  static const char* text_shader;
   static const char* shader;
 
   static const float paddle_velocity;
   static const float ball_velocity;
   static constexpr float ball_radius = 12.5f;
 
+  static const uint32_t font_size;
+
   static constexpr glm::vec2 paddle_size = glm::vec2(100.0f, 20.0f);
   static constexpr glm::vec2 paddle_pos =
-      glm::vec2(SCREEN_W / 2 - paddle_size.x / 2 , SCREEN_H - paddle_size.y);
-  static constexpr glm::vec2 ball_pos = paddle_pos + glm::vec2(paddle_size.x / 2.0f - ball_radius, 
-                                              -ball_radius * 2.0f);
+      glm::vec2(SCREEN_W / 2 - paddle_size.x / 2, SCREEN_H - paddle_size.y);
+  static constexpr glm::vec2 ball_pos =
+      paddle_pos +
+      glm::vec2(paddle_size.x / 2.0f - ball_radius, -ball_radius * 2.0f);
 
   static std::map<std::string, SpriteRenderer*> Renderers;
   static std::map<std::string, Texture2D*> Textures;
@@ -69,24 +79,32 @@ class ResourceManager {
                                       const char* fShaderFile,
                                       const char* gShaderFile,
                                       const std::string& name);
+  static TextRenderer* LoadTextRenderer(const char* vShaderFile,
+                                        const char* fShaderFile,
+                                        const char* gShaderFile,
+                                        const std::string& name);
   // retrieves a stored sader
   static SpriteRenderer* GetRenderer(const std::string& name);
   // loads (and generates) a texture from file
   static Texture2D* LoadTexture(const char* file, const std::string& name,
                                 const std::string& name_in_shader,
                                 uint32_t texpos, bool reverse_y = true);
+  static Texture2D* LoadTexture(const char* data, const std::string& name,
+                                const std::string& name_in_shader,
+                                uint32_t texpos, uint32_t width,
+                                uint32_t height, uint32_t format);
   // retrieves a stored texture
   static Texture2D* GetTexture(const std::string& name);
 
   static GameLevel* LoadGameLevel(uint32_t level, uint32_t levelW,
                                   uint32_t levelH);
-  void RmGameLevel(GameLevel* glevel);
+  static void RmGameLevel(GameLevel* glevel);
   // properly de-allocates all loaded resources
   static void Clear();
 
  private:
   // private constructor, that is we do not want any actual resource manager
-  // objects. Its members and functions should be publicly available (static).
+  // objec.Xts. Its members and functions should be publicly available (static).
   ResourceManager() {}
   // loads and generates a shader from file
   static Shader* loadShaderFromFile(const char* vShaderFile,

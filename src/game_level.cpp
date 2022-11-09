@@ -8,9 +8,7 @@ void GameLevel::Draw(SpriteRenderer* renderer) {
 }
 
 bool GameLevel::IsCompleted() {
-  for (Brick* tile : Bricks)
-    if (!tile->IsSolid && !tile->Destroyed) return false;
-  return true;
+  return num_brk == destroyed_brk;
 }
 
 GameLevel::GameLevel(const std::vector<std::vector<unsigned int> >& tileData,
@@ -18,6 +16,7 @@ GameLevel::GameLevel(const std::vector<std::vector<unsigned int> >& tileData,
   // calculate dimensions
   brickH = tileData.size();
   brickW = tileData[0].size();  
+  num_brk = destroyed_brk = 0;
 
   float unit_width = levelWidth / static_cast<float>(brickW),
         unit_height = levelHeight / static_cast<float>(brickH);
@@ -27,13 +26,14 @@ GameLevel::GameLevel(const std::vector<std::vector<unsigned int> >& tileData,
       // check block type from level data (2D level array)
       glm::vec2 pos(unit_width * x, unit_height * y);
       glm::vec2 size(unit_width, unit_height);
-      glm::vec3 color = ResourceManager::ObjColor[tileData[y][x]];
+      glm::vec4 color = glm::vec4(ResourceManager::ObjColor[tileData[y][x]], 1.0f);
       bool isSolid = tileData[y][x] == 1;
       const char* texName = tileData[y][x] == 1 ? ResourceManager::solid_block
                                                 : ResourceManager::block;
       Texture2D* sprite = ResourceManager::GetTexture(texName);
       Brick* obj = new Brick(y, x, isSolid, pos, size, sprite, color);
       Bricks.push_back(obj);
+      num_brk += !isSolid;
     }
   }
 }
@@ -42,6 +42,12 @@ GameLevel::~GameLevel() {
   for (auto iter : Bricks) {
     delete iter;
   }
+}
+
+void GameLevel::Reset(){
+  for(Brick* brick : Bricks){
+    brick->Reset(brick->Position);
+  }  
 }
 
 void GameLevel::UpdateWH(uint32_t levelW, uint32_t levelH) {

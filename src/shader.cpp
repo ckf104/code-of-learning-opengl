@@ -5,7 +5,7 @@
 
 Shader::Shader() {}
 Shader::Shader(const char *vertexSource, const char *fragmentSource,
-               const char *geometrySource/*=null*/) {
+               const char *geometrySource /*=null*/) {
   Compile(vertexSource, fragmentSource, geometrySource);
 }
 
@@ -94,10 +94,12 @@ void Shader::SetMatrix4(const char *name, const glm::mat4 &matrix,
   glUniformMatrix4fv(glGetUniformLocation(this->ID, name), 1, false,
                      glm::value_ptr(matrix));
 }
-
-void Shader::Destroy(){
-  glDeleteProgram(ID);
+void Shader::SetBool(const char *name, bool value, bool useShader) {
+  if (useShader) this->Use();
+  glUniform1i(glGetUniformLocation(this->ID, name), (int)value);
 }
+
+void Shader::Destroy() { glDeleteProgram(ID); }
 
 void Shader::checkCompileErrors(unsigned int object, std::string type) {
   int success;

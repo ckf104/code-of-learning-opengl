@@ -23,18 +23,26 @@ const char *ResourceManager::paddle = "paddle";
 const char *ResourceManager::paddle_file = "resources/paddle.png";
 
 const char *ResourceManager::background = "background";
-const char *ResourceManager::background_file = "resources/background.jpg";
+const char *ResourceManager::background_file = "resources/bg2.jpg";
+
+const char *ResourceManager::particle = "particle";
+const char *ResourceManager::particle_file = "resources/image.png";
 
 const char *ResourceManager::ball = "ball";
-const char *ResourceManager::ball_file = "resources/face.png";
+const char *ResourceManager::ball_file = "resources/ball.png";
 
 const char *ResourceManager::texname_in_shader = "image";
+const char *ResourceManager::font_file = "resources/FreeMono.ttf";
 
 const float ResourceManager::paddle_velocity = 200.0f;
-const float ResourceManager::ball_velocity = 200.0f;
+const float ResourceManager::ball_velocity = 300.0f;
+
+const uint32_t ResourceManager::font_size = 32;
 
 const char *ResourceManager::vshader_file = "shader/vshader.glsl";
 const char *ResourceManager::fshader_file = "shader/fshader.glsl";
+const char *ResourceManager::textfshader_file = "shader/textfshader.glsl";
+const char *ResourceManager::text_shader = "text_shader";
 const char *ResourceManager::shader = "shader";
 
 // clang-format off
@@ -53,6 +61,7 @@ void ResourceManager::LoadInitRes() {
   LoadTexture(block_file, block, texname_in_shader, 0);
   LoadTexture(background_file, background, texname_in_shader, 0);
   LoadTexture(paddle_file, paddle, texname_in_shader, 0);
+  LoadTexture(particle_file, particle, texname_in_shader, 0);
   LoadTexture(ball_file, ball, texname_in_shader, 0);
 }
 
@@ -88,7 +97,10 @@ GameLevel *ResourceManager::LoadGameLevel(uint32_t level, uint32_t levelW,
   if (glevel) levels.insert(glevel);
   return glevel;
 }
-void ResourceManager::RmGameLevel(GameLevel *glevel) { delete glevel; }
+void ResourceManager::RmGameLevel(GameLevel *glevel) {
+  levels.erase(glevel);
+  delete glevel;
+}
 
 // TODO: do not need shader
 SpriteRenderer *ResourceManager::LoadRenderer(const char *vShaderFile,
@@ -104,6 +116,19 @@ SpriteRenderer *ResourceManager::LoadRenderer(const char *vShaderFile,
   return nullptr;
 }
 
+TextRenderer *ResourceManager::LoadTextRenderer(const char *vShaderFile,
+                                                const char *fShaderFile,
+                                                const char *gShaderFile,
+                                                const std::string &name) {
+  Shader *s = loadShaderFromFile(vShaderFile, fShaderFile, gShaderFile);
+  if (s) {
+    TextRenderer *r = new TextRenderer(s, font_file, font_size);
+    Renderers[name] = r;
+    return r;
+  }
+  return nullptr;
+}
+
 SpriteRenderer *ResourceManager::GetRenderer(const std::string &name) {
   return Renderers[name];
 }
@@ -111,10 +136,20 @@ SpriteRenderer *ResourceManager::GetRenderer(const std::string &name) {
 Texture2D *ResourceManager::LoadTexture(const char *file,
                                         const std::string &name,
                                         const std::string &name_in_shader,
-                                        uint32_t texpos,
-                                        bool reverse_y /*=true*/) {
+                                        uint32_t texpos, bool reverse_y) {
   Texture2D *t = loadTextureFromFile(file, name_in_shader, texpos, reverse_y);
   if (t) Textures[name] = t;
+  return t;
+}
+
+Texture2D *ResourceManager::LoadTexture(const char *data,
+                                        const std::string &name,
+                                        const std::string &name_in_shader,
+                                        uint32_t texpos, uint32_t width,
+                                        uint32_t height, uint32_t format) {
+  Texture2D *t = new Texture2D(name_in_shader, texpos, format, height, width,
+                               data, GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
+  Textures[name] = t;
   return t;
 }
 

@@ -17,6 +17,7 @@ class GameLevel {
   // level state
   std::vector<Brick*> Bricks;
   uint32_t brickW, brickH;
+  uint32_t num_brk, destroyed_brk;
   // constructor
   GameLevel(const std::vector<std::vector<uint32_t>>& tile, uint32_t levelW,
             uint32_t levelH);
@@ -27,6 +28,7 @@ class GameLevel {
   // render level
   void Draw(SpriteRenderer* renderer);
   // check if the level is completed (all non-solid tiles are destroyed)
+  void Reset();
   bool IsCompleted();
   void UpdateWH(uint32_t levelW, uint32_t levelH);
 };

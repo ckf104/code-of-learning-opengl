@@ -8,13 +8,9 @@
 #include "hello.hpp"
 #include "texture.hpp"
 #include "game.hpp"
+#include "resource_manager.hpp"
 
 Game Breakout(SCREEN_W, SCREEN_H);
-void process_input(GLFWwindow* window, float deltaTime) {
-  if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-    glfwSetWindowShouldClose(window, true);
-  Breakout.ProcessInput(deltaTime, window);
-}
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
   std::cout << "[info] new width: " << width << " , height: " << height
@@ -74,14 +70,14 @@ int main() {
     Breakout.Render();
 
     float dt = (float)glfwGetTime() - lastFrame;
-    process_input(window, dt);
-    Breakout.Update(dt);
+    Breakout.Update(dt, window);
     checkErr();
     // glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     checkErr();
     glfwSwapBuffers(window);
     glfwPollEvents();
   }
+  ResourceManager::Clear();
   
   glfwTerminate();
   return 0;
